@@ -10,23 +10,37 @@ import ru.clevertec.check.infrastructure.output.file.ErrorFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.file.ProductFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.std.StdOutputAdapter;
 import ru.clevertec.check.interfaces.commandline.CommandLineAdapter;
+import ru.clevertec.check.interfaces.commandline.parser.ArgumentParsingContext;
+import ru.clevertec.check.interfaces.commandline.parser.PathToFromFileRegexParser;
+
+import java.util.Arrays;
 
 public class CheckRunner {
     public static void main(String[] args) {
-        CheckOutputPort checkOutputPort = new CheckFileOutPutAdapter();
-        DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter();
-        ErrorOutputPort errorOutputPort = new ErrorFileOutputAdapter();
-        ProductOutputPort productOutputPort = new ProductFileOutputAdapter();
-        StdOutputPort stdOutputPort = new StdOutputAdapter();
+        String args2 = "1-2 discountCard=1111 balanceDebitCard=100 pathToFile=files/discountCards.csv saveToFile=files/result.csv";
 
-        CheckUseCase createCheckUseCase = new CheckInputPort(checkOutputPort,
-                productOutputPort,
-                discountCardOutputPort,
-                errorOutputPort,
-                stdOutputPort
-        );
+        ArgumentParsingContext argumentParsingContext = new ArgumentParsingContext();
+        PathToFromFileRegexParser parser = new PathToFromFileRegexParser();
+        parser.parse(args2, argumentParsingContext);
 
-        CommandLineAdapter commandLineAdapter = new CommandLineAdapter(createCheckUseCase);
-        commandLineAdapter.createCheck(args);
+        System.out.println(argumentParsingContext.getRelativePathToSave());
     }
 }
+
+
+// CheckOutputPort checkOutputPort = new CheckFileOutPutAdapter();
+//        DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter();
+//        ErrorOutputPort errorOutputPort = new ErrorFileOutputAdapter();
+//        ProductOutputPort productOutputPort = new ProductFileOutputAdapter();
+//        StdOutputPort stdOutputPort = new StdOutputAdapter();
+//
+//        CheckUseCase createCheckUseCase = new CheckInputPort(checkOutputPort,
+//                productOutputPort,
+//                discountCardOutputPort,
+//                errorOutputPort,
+//                stdOutputPort
+//        );
+//
+//        CommandLineAdapter commandLineAdapter = new CommandLineAdapter(createCheckUseCase);
+//        commandLineAdapter.createCheck(args);
+//    }

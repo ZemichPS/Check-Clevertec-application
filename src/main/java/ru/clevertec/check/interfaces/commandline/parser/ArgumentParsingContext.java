@@ -10,6 +10,8 @@ public class ArgumentParsingContext {
     private CardNumber cardNumber;
     private BigDecimal balanceDebitCard;
     private Map<ProductId, Integer> productIdQuantityMap = new HashMap<>();
+    private String relativePathToFile;
+    private String relativePathToSave;
 
     public ArgumentParsingContext(CardNumber cardNumber,
                                   BigDecimal balanceDebitCard,
@@ -56,5 +58,21 @@ public class ArgumentParsingContext {
                 ", balanceDebitCard=" + balanceDebitCard +
                 ", productIdQuantityEntryList=" + productIdQuantityMap +
                 '}';
+    }
+
+    public String getRelativePathToFile() {
+        return relativePathToFile;
+    }
+
+    public void setRelativePathToFile(String relativePathToFile) {
+        this.relativePathToFile = relativePathToFile;
+    }
+
+    public String getRelativePathToSave() {
+        return relativePathToSave;
+    }
+
+    public void setRelativePathToSave(String relativePathToSave) {
+        this.relativePathToSave = relativePathToSave;
     }
 }
