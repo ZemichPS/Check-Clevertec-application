@@ -11,17 +11,18 @@ import java.util.Map;
 
 public class CommandLineAdapter {
     private final CheckUseCase createCheckUseCase;
+    private final ParserContext parserContext = new ParserContext();
 
     public CommandLineAdapter(CheckUseCase createCheckUseCase) {
         this.createCheckUseCase = createCheckUseCase;
-    }
-
-    public Check createCheck(String... args){
-        ParserContext parserContext = new ParserContext();
         parserContext.addParser(new BalanceDebitCardRegexParser());
         parserContext.addParser(new IdQuantityToMapRegexParser());
         parserContext.addParser(new DiscountCardNumberParser());
+        parserContext.addParser(new PathFromProductFileRegexParser());
+        parserContext.addParser(new PathToSaveFileRegexParser());
+    }
 
+    public Check createCheck(String... args){
         ArgumentParsingContext argumentParsingContext = parserContext.parseArguments(args);
         Map<ProductId, Integer> productIdQuantityMap = argumentParsingContext.getProductIdQuantityMap();
         BigDecimal debitCardBalance =  argumentParsingContext.getBalanceDebitCard().orElse(BigDecimal.ZERO);
@@ -31,7 +32,6 @@ public class CommandLineAdapter {
             return createCheckUseCase.create(productIdQuantityMap, cardNumber, debitCardBalance);
         }
         return createCheckUseCase.create(productIdQuantityMap, debitCardBalance);
-
     }
 
 }

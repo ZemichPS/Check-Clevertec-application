@@ -14,8 +14,12 @@ import java.nio.file.Paths;
 
 public class ErrorFileOutputAdapter implements ErrorOutputPort {
 
-    private final Path DEFAULT_RESULT_FILE_PATH = Paths.get("result.csv");
+    private final Path DEFAULT_RESULT_FILE_PATH;
     private final CSVWriter<String> CSVWriter = new ErrorToCSVFileWriter(new SimpleCSVStructureMapper());
+
+    public ErrorFileOutputAdapter(Path defaultResultFilePath) {
+        DEFAULT_RESULT_FILE_PATH = defaultResultFilePath;
+    }
 
     @Override
     public void writeError(String errorDescription) throws IOException, URISyntaxException, InvocationTargetException, IllegalAccessException {
