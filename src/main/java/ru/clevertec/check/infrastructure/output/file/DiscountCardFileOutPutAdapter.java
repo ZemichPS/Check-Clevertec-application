@@ -1,6 +1,5 @@
 package ru.clevertec.check.infrastructure.output.file;
 
-import ru.clevertec.check.CheckRunner;
 import ru.clevertec.check.application.ports.output.DiscountCardOutputPort;
 import ru.clevertec.check.domain.model.entity.RealDiscountCard;
 import ru.clevertec.check.infrastructure.output.file.mapper.CSVStructureToDiscountCardsMapper;
@@ -10,14 +9,20 @@ import ru.clevertec.check.infrastructure.utils.SimpleCVSFileReader;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
 
 public class DiscountCardFileOutPutAdapter implements DiscountCardOutputPort {
 
-    private final String DISCOUNT_CARDS_RESOURCE_FILE_NAME = "discountCards.csv";
+    private final Path DISCOUNT_CARDS_RESOURCE_FILE_NAME;
     private final CSVReader csvReader = new SimpleCVSFileReader();
     CSVStructureToObjectMapper<RealDiscountCard> mapper = new CSVStructureToDiscountCardsMapper();
+
+    public DiscountCardFileOutPutAdapter(Path discountCardsResourceFileName) {
+        DISCOUNT_CARDS_RESOURCE_FILE_NAME = discountCardsResourceFileName;
+    }
+
 
     @Override
     public List<RealDiscountCard> findAll() throws URISyntaxException, IOException {

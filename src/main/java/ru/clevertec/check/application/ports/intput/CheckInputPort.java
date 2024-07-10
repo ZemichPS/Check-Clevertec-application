@@ -23,24 +23,50 @@ import java.util.List;
 import java.util.Map;
 
 public class CheckInputPort implements CheckUseCase {
-    private final CheckOutputPort checkOutputPort;
-    private final ProductOutputPort productOutputPort;
+    private final CheckFileOutputPort checkFileOutputPort;
+    private final ProductFileOutputPort productFileOutputPort;
     private final DiscountCardOutputPort discountCardOutputPort;
-    private final ErrorOutputPort errorOutputPort;
+    private final ErrorFileOutputPort errorFileOutputPort;
     private final StdOutputPort stdOutputPort;
     private final DiscountService discountService = new DiscountService();
 
-    public CheckInputPort(CheckOutputPort checkOutputPort,
-                          ProductOutputPort productOutputPort,
+
+    public CheckInputPort(CheckFileOutputPort checkFileOutputPort,
+                          ProductFileOutputPort productFileOutputPort,
                           DiscountCardOutputPort discountCardOutputPort,
-                          ErrorOutputPort errorOutputPort, StdOutputPort stdOutputPort) {
-        this.checkOutputPort = checkOutputPort;
-        this.productOutputPort = productOutputPort;
+                          ErrorFileOutputPort errorFileOutputPort,
+                          StdOutputPort stdOutputPort) {
+        this.checkFileOutputPort = checkFileOutputPort;
+        this.productFileOutputPort = productFileOutputPort;
         this.discountCardOutputPort = discountCardOutputPort;
-        this.errorOutputPort = errorOutputPort;
+        this.errorFileOutputPort = errorFileOutputPort;
         this.stdOutputPort = stdOutputPort;
     }
 
+
+    @Override
+    public Check create(Map<ProductId, Integer> orderMap,
+                        CardNumber cardNumber,
+                        BigDecimal debitCardBalance) {
+
+        checkOnEmptyOrderMap(orderMap);
+        checkDebitCardBalance(debitCardBalance);
+
+        final List<RealDiscountCard> allDiscountCard = findAllDiscountCard();
+        DiscountCard discountCard = tryToIssueDiscountCard(allDiscountCard, cardNumber);
+
+        List<ProductPosition> productPositionsInStock = getProductPositionsInStock();
+        final List<OrderItemDto> orderItems = mapOrderListToOrderItems(orderMap, discountCard, productPositionsInStock);
+        final List<CheckItem> checkItems = mapOrderItemsToCheckItems(orderItems);
+
+        Check newCheck = CheckFactory.getNewFromCheckItems(checkItems);
+        newCheck.addDiscountCart(discountCard);
+        checkForAbilityToPay(newCheck, debitCardBalance);
+
+        tryToPersistCheck(newCheck);
+        stdOutputPort.printCheck(newCheck);
+        return newCheck;
+    }
 
     @Override
     public Check create(Map<ProductId, Integer> orderMap, BigDecimal debitCardBalance) {
@@ -57,29 +83,15 @@ public class CheckInputPort implements CheckUseCase {
         Check newCheck = CheckFactory.getNewFromCheckItems(checkItems);
         newCheck.addDiscountCart(discountCard);
         checkForAbilityToPay(newCheck, debitCardBalance);
-        stdOutputPort.printCheck(newCheck);
 
-        try {
-            return checkOutputPort.persist(newCheck);
-        } catch (InvocationTargetException | IllegalAccessException | URISyntaxException | IOException e) {
-            handleException(new InternalServerErrorException("Failed to persist check"));
-            throw new RuntimeException();
-        }
+        tryToPersistCheck(newCheck);
+        stdOutputPort.printCheck(newCheck);
+        return newCheck;
     }
 
-    @Override
-    public Check create(Map<ProductId, Integer> orderMap,
-                        CardNumber cardNumber,
-                        BigDecimal debitCardBalance) {
-
-        checkOnEmptyOrderMap(orderMap);
-        checkDebitCardBalance(debitCardBalance);
-
-        final List<RealDiscountCard> allDiscountCard = findAllDiscountCard();
-        DiscountCard discountCard = null;
-
+    private DiscountCard tryToIssueDiscountCard(List<RealDiscountCard> allDiscountCard, CardNumber cardNumber ){
         try {
-            discountCard = DiscountCardService.findByCardNumber(allDiscountCard, cardNumber)
+            return DiscountCardService.findByCardNumber(allDiscountCard, cardNumber)
                     .orElseGet(() -> {
                         RealDiscountCard newDiscountCard = new RealDiscountCard(new CardId(100));
                         newDiscountCard.addCardNumber(cardNumber);
@@ -87,23 +99,20 @@ public class CheckInputPort implements CheckUseCase {
                         policy.apply(newDiscountCard);
                         return newDiscountCard;
                     });
+
         } catch (GenericSpecificationException exception) {
             handleException(exception);
         }
 
-        List<ProductPosition> productPositionsInStock = getProductPositionsInStock();
-        final List<OrderItemDto> orderItems = mapOrderListToOrderItems(orderMap, discountCard, productPositionsInStock);
-        final List<CheckItem> checkItems = mapOrderItemsToCheckItems(orderItems);
+        return new NullDiscountCard();
+    }
 
-        Check newCheck = CheckFactory.getNewFromCheckItems(checkItems);
-        newCheck.addDiscountCart(discountCard);
-
-        checkForAbilityToPay(newCheck, debitCardBalance);
-        stdOutputPort.printCheck(newCheck);
-
+    private void tryToPersistCheck(Check check){
         try {
-            return checkOutputPort.persist(newCheck);
-        } catch (InvocationTargetException | IllegalAccessException | IOException | URISyntaxException e) {
+            checkFileOutputPort.persist(check);
+        } catch (BadFilePathException badFilePathException) {
+            handleException(badFilePathException);
+        } catch (InvocationTargetException | IllegalAccessException | URISyntaxException | IOException e) {
             handleException(new InternalServerErrorException("Failed to persist check"));
             throw new RuntimeException();
         }
@@ -112,18 +121,19 @@ public class CheckInputPort implements CheckUseCase {
     private List<ProductPosition> getProductPositionsInStock() {
         List<ProductPosition> productPositionsInStock = List.of();
         try {
-            productPositionsInStock = productOutputPort.findAll();
-        } catch (URISyntaxException | IOException e) {
+            productPositionsInStock = productFileOutputPort.findAll();
+        } catch (BadFilePathException e) {
+            handleException(e);
+        } catch (IOException e) {
             handleException(new InternalServerErrorException(e.getMessage()));
         }
         return productPositionsInStock;
     }
 
-
-    private void handleException(AbstractException exception) {
+      private void handleException(AbstractException exception) {
         String errorText = exception.getErrorText();
         try {
-            errorOutputPort.writeError(errorText);
+            errorFileOutputPort.writeError(errorText);
             stdOutputPort.printError(errorText);
             throw exception;
         } catch (IOException | IllegalAccessException | InvocationTargetException | URISyntaxException e) {

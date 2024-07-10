@@ -4,23 +4,15 @@ import ru.clevertec.check.domain.model.valueobject.CardNumber;
 import ru.clevertec.check.domain.model.valueobject.ProductId;
 
 import java.math.BigDecimal;
+import java.nio.file.Path;
 import java.util.*;
 
 public class ArgumentParsingContext {
     private CardNumber cardNumber;
     private BigDecimal balanceDebitCard;
     private Map<ProductId, Integer> productIdQuantityMap = new HashMap<>();
-    private String relativePathToFile;
-    private String relativePathToSave;
-
-    public ArgumentParsingContext(CardNumber cardNumber,
-                                  BigDecimal balanceDebitCard,
-                                  Map<ProductId, Integer> productIdIntegerMap
-    ) {
-        this.cardNumber = cardNumber;
-        this.balanceDebitCard = balanceDebitCard;
-        this.productIdQuantityMap = productIdIntegerMap;
-    }
+    private Path pathFromProductFile;
+    private Path pathToSaveResultFile;
 
     public ArgumentParsingContext() {
     }
@@ -51,28 +43,30 @@ public class ArgumentParsingContext {
         productIdQuantityMap.merge(productId, quantity, Integer::sum);
     }
 
+    public Optional<Path> getPathFromProductFile() {
+        return Optional.ofNullable(pathFromProductFile);
+    }
+
+    public void setPathFromProductFile(Path pathFromProductFile) {
+        this.pathFromProductFile = pathFromProductFile;
+    }
+
+    public Optional<Path> getPathToSaveResultFile() {
+        return Optional.ofNullable(pathToSaveResultFile);
+    }
+
+    public void setPathToSaveResultFile(Path pathToSaveResultFile) {
+        this.pathToSaveResultFile = pathToSaveResultFile;
+    }
+
     @Override
     public String toString() {
         return "ArgumentParsingContext{" +
                 "cardNumber=" + cardNumber +
                 ", balanceDebitCard=" + balanceDebitCard +
-                ", productIdQuantityEntryList=" + productIdQuantityMap +
+                ", productIdQuantityMap=" + productIdQuantityMap +
+                ", pathFromProductFile='" + pathFromProductFile + '\'' +
+                ", pathToSaveResultFile='" + pathToSaveResultFile + '\'' +
                 '}';
-    }
-
-    public String getRelativePathToFile() {
-        return relativePathToFile;
-    }
-
-    public void setRelativePathToFile(String relativePathToFile) {
-        this.relativePathToFile = relativePathToFile;
-    }
-
-    public String getRelativePathToSave() {
-        return relativePathToSave;
-    }
-
-    public void setRelativePathToSave(String relativePathToSave) {
-        this.relativePathToSave = relativePathToSave;
     }
 }

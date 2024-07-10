@@ -4,43 +4,69 @@ package ru.clevertec.check;
 import ru.clevertec.check.application.ports.intput.CheckInputPort;
 import ru.clevertec.check.application.ports.output.*;
 import ru.clevertec.check.application.usecases.CheckUseCase;
-import ru.clevertec.check.infrastructure.output.file.CheckFileOutPutAdapter;
-import ru.clevertec.check.infrastructure.output.file.DiscountCardFileOutPutAdapter;
-import ru.clevertec.check.infrastructure.output.file.ErrorFileOutputAdapter;
-import ru.clevertec.check.infrastructure.output.file.ProductFileOutputAdapter;
+import ru.clevertec.check.domain.model.valueobject.ProductId;
+import ru.clevertec.check.infrastructure.output.file.*;
 import ru.clevertec.check.infrastructure.output.std.StdOutputAdapter;
-import ru.clevertec.check.interfaces.commandline.CommandLineAdapter;
-import ru.clevertec.check.interfaces.commandline.parser.ArgumentParsingContext;
-import ru.clevertec.check.interfaces.commandline.parser.PathToFromFileRegexParser;
+import ru.clevertec.check.interfaces.commandline.parser.*;
 
-import java.util.Arrays;
+import java.math.BigDecimal;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Map;
 
 public class CheckRunner {
+    private final Path DEFAULT_RESULT_FILE_PATH = Paths.get("result.csv");
+    private final Path DEFAULT_DISCOUNT_CARD_FILE_PATH = Paths.get("discountCards.csv");
+
+    DiscountCardOutputPort discountCardOutputPort;
+    StdOutputPort stdOutputPort;
+    ProductFileOutputPort productOutputPort;
+    CheckFileOutputPort checkFileOutputPort;
+    CheckFileOutputPort decoratedCheckFileOutputPort;
+    ErrorFileOutputPort errorFileOutputPort;
+    CheckUseCase checkUseCase;
+
     public static void main(String[] args) {
-        String args2 = "1-2 discountCard=1111 balanceDebitCard=100 pathToFile=files/discountCards.csv saveToFile=files/result.csv";
 
-        ArgumentParsingContext argumentParsingContext = new ArgumentParsingContext();
-        PathToFromFileRegexParser parser = new PathToFromFileRegexParser();
-        parser.parse(args2, argumentParsingContext);
+        ParserContext parserContext = new ParserContext();
+        parserContext.addParser(new BalanceDebitCardRegexParser());
+        parserContext.addParser(new IdQuantityToMapRegexParser());
+        parserContext.addParser(new DiscountCardNumberParser());
+        parserContext.addParser(new PathFromProductFileRegexParser());
+        parserContext.addParser(new PathToSaveFileRegexParser());
+        ArgumentParsingContext argumentParsingContext = parserContext.parseArguments(args);
 
-        System.out.println(argumentParsingContext.getRelativePathToSave());
+        new CheckRunner().setAdapter(argumentParsingContext);
+    }
+
+    void setAdapter(ArgumentParsingContext argumentParsingContext) {
+
+        Map<ProductId, Integer> productIdQuantityMap = argumentParsingContext.getProductIdQuantityMap();
+        BigDecimal debitCardBalance = argumentParsingContext.getBalanceDebitCard().orElse(BigDecimal.ZERO);
+        Path productFilePath = argumentParsingContext.getPathFromProductFile().orElse(Path.of(""));
+        Path resultFilePath = argumentParsingContext.getPathToSaveResultFile().orElse(DEFAULT_RESULT_FILE_PATH);
+
+        stdOutputPort = new StdOutputAdapter();
+        discountCardOutputPort = new DiscountCardFileOutPutAdapter(DEFAULT_DISCOUNT_CARD_FILE_PATH);
+        errorFileOutputPort = new ErrorFileFileOutputAdapter(resultFilePath);
+        productOutputPort = new ProductFileFileOutputAdapter(productFilePath);
+
+        checkFileOutputPort = new CheckFileOutPutAdapter(resultFilePath);
+        decoratedCheckFileOutputPort = new CheckFileOutputPortDecorator(checkFileOutputPort, resultFilePath);
+
+        checkUseCase = new CheckInputPort(
+                decoratedCheckFileOutputPort,
+                productOutputPort,
+                discountCardOutputPort,
+                errorFileOutputPort,
+                stdOutputPort
+        );
+
+        argumentParsingContext.getCardNumber().ifPresentOrElse(
+                cardNumber -> {
+                    checkUseCase.create(productIdQuantityMap, cardNumber, debitCardBalance);
+                }, () -> checkUseCase.create(productIdQuantityMap, debitCardBalance)
+        );
     }
 }
 
-
-// CheckOutputPort checkOutputPort = new CheckFileOutPutAdapter();
-//        DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter();
-//        ErrorOutputPort errorOutputPort = new ErrorFileOutputAdapter();
-//        ProductOutputPort productOutputPort = new ProductFileOutputAdapter();
-//        StdOutputPort stdOutputPort = new StdOutputAdapter();
-//
-//        CheckUseCase createCheckUseCase = new CheckInputPort(checkOutputPort,
-//                productOutputPort,
-//                discountCardOutputPort,
-//                errorOutputPort,
-//                stdOutputPort
-//        );
-//
-//        CommandLineAdapter commandLineAdapter = new CommandLineAdapter(createCheckUseCase);
-//        commandLineAdapter.createCheck(args);
-//    }

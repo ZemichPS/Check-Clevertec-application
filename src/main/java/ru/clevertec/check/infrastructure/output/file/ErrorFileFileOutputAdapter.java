@@ -1,7 +1,7 @@
 package ru.clevertec.check.infrastructure.output.file;
 
 import ru.clevertec.check.CheckRunner;
-import ru.clevertec.check.application.ports.output.ErrorOutputPort;
+import ru.clevertec.check.application.ports.output.ErrorFileOutputPort;
 import ru.clevertec.check.infrastructure.output.file.mapper.SimpleCSVStructureMapper;
 import ru.clevertec.check.infrastructure.utils.CSVWriter;
 import ru.clevertec.check.infrastructure.utils.ErrorToCSVFileWriter;
@@ -12,12 +12,12 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ErrorFileOutputAdapter implements ErrorOutputPort {
+public class ErrorFileFileOutputAdapter implements ErrorFileOutputPort {
 
     private final Path DEFAULT_RESULT_FILE_PATH;
     private final CSVWriter<String> CSVWriter = new ErrorToCSVFileWriter(new SimpleCSVStructureMapper());
 
-    public ErrorFileOutputAdapter(Path defaultResultFilePath) {
+    public ErrorFileFileOutputAdapter(Path defaultResultFilePath) {
         DEFAULT_RESULT_FILE_PATH = defaultResultFilePath;
     }
 

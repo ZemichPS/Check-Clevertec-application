@@ -6,8 +6,8 @@ public enum SaleConditionType {
 
     public static SaleConditionType fromString(String str) throws IllegalStateException {
         return switch (str){
-            case "+" -> WHOLESALE;
-            case "-" -> USUAL_PRICE;
+            case "+", "true" -> WHOLESALE;
+            case "-", "false" -> USUAL_PRICE;
             default -> throw new IllegalStateException("Unexpected value: " + str);
         };
     }

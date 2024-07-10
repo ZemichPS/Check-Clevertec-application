@@ -63,7 +63,8 @@ public class CheckToCSVFileWriter implements CSVWriter<Check> {
 
 
         result.append(csvStructureMapper.getLineFromClassFieldsName(CSVStructureMapper.RegisterType.UPPER_CASE, TotalPricesDto.class))
-                .append(csvStructureMapper.getLineFromObjectValues(totalPrices, "$", "$", "$"));
+                .append(csvStructureMapper.getLineFromObjectValues(totalPrices, "$", "$", "$"))
+                .append(csvStructureMapper.addDownSpaceLine());
 
         return result.toString();
     }
