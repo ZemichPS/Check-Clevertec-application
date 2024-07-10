@@ -26,5 +26,7 @@ where:
     * `Adapter` - base of hexagonal architecture;
     * `Factory method`; 
     * `Strategy`;
+    * `NullObject`.
+  
   
 
