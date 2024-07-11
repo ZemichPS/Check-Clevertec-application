@@ -1,5 +1,5 @@
 # Check clevertec application
-### PROJECT POWERED BY HEXAGONAL ARCHITECTURE WITH DDD APPROACH
+> PROJECT POWERED BY HEXAGONAL ARCHITECTURE WITH DDD APPROACH
 
 solution of the test task of the company Clevertec
 
