@@ -49,4 +49,8 @@ public class Product {
     public SaleConditionType getSaleConditionType() {
         return saleConditionType;
     }
+
+    public void setSaleConditionType(SaleConditionType saleConditionType) {
+        this.saleConditionType = saleConditionType;
+    }
 }

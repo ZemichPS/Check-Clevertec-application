@@ -1,6 +1,6 @@
 package ru.clevertec.check.infrastructure.output.file;
 
-import ru.clevertec.check.application.ports.output.ProductFileOutputPort;
+import ru.clevertec.check.application.ports.output.ProductOutputPort;
 import ru.clevertec.check.domain.model.exception.BadFilePathException;
 import ru.clevertec.check.domain.model.valueobject.ProductPosition;
 import ru.clevertec.check.infrastructure.output.file.mapper.CSVStructureToProductPositionsMapper;
@@ -14,12 +14,12 @@ import java.nio.file.Path;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class ProductFileFileOutputAdapter implements ProductFileOutputPort {
+public class ProductFileOutputAdapter implements ProductOutputPort {
     private final Path PRODUCT_LIST_PATH;
     private final CSVReader csvReader = new SimpleCVSFileReader();
     CSVStructureToObjectMapper<ProductPosition> mapper = new CSVStructureToProductPositionsMapper();
 
-    public ProductFileFileOutputAdapter(Path productListPath) {
+    public ProductFileOutputAdapter(Path productListPath) {
         PRODUCT_LIST_PATH = productListPath;
     }
 

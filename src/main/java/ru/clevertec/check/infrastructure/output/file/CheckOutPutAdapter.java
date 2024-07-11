@@ -1,6 +1,5 @@
 package ru.clevertec.check.infrastructure.output.file;
 
-import ru.clevertec.check.CheckRunner;
 import ru.clevertec.check.domain.model.entity.Check;
 import ru.clevertec.check.infrastructure.output.file.mapper.SimpleCSVStructureMapper;
 import ru.clevertec.check.infrastructure.utils.CSVWriter;
@@ -11,11 +10,11 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URISyntaxException;
 import java.nio.file.Path;
 
-public class CheckFileOutPutAdapter extends AbstractFileOutputPort {
+public class CheckOutPutAdapter extends AbstractOutputPort {
 
     private final CSVWriter<Check> CSVWriter = new CheckToCSVFileWriter(new SimpleCSVStructureMapper());
 
-    public CheckFileOutPutAdapter(Path defaulResultPath) {
+    public CheckOutPutAdapter(Path defaulResultPath) {
         super(defaulResultPath);
     }
 

@@ -13,13 +13,13 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
 
-public class DiscountCardFileOutPutAdapter implements DiscountCardOutputPort {
+public class DiscountCardFileOutputAdapter implements DiscountCardOutputPort {
 
     private final Path DISCOUNT_CARDS_RESOURCE_FILE_NAME;
     private final CSVReader csvReader = new SimpleCVSFileReader();
     CSVStructureToObjectMapper<RealDiscountCard> mapper = new CSVStructureToDiscountCardsMapper();
 
-    public DiscountCardFileOutPutAdapter(Path discountCardsResourceFileName) {
+    public DiscountCardFileOutputAdapter(Path discountCardsResourceFileName) {
         DISCOUNT_CARDS_RESOURCE_FILE_NAME = discountCardsResourceFileName;
     }
 

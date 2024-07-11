@@ -62,7 +62,7 @@ public class ArgumentParsingContext {
     @Override
     public String toString() {
         return "ArgumentParsingContext{" +
-                "cardNumber=" + cardNumber +
+                "discountCardNumber=" + cardNumber +
                 ", balanceDebitCard=" + balanceDebitCard +
                 ", productIdQuantityMap=" + productIdQuantityMap +
                 ", pathFromProductFile='" + pathFromProductFile + '\'' +

@@ -23,23 +23,23 @@ import java.util.List;
 import java.util.Map;
 
 public class CheckInputPort implements CheckUseCase {
-    private final CheckFileOutputPort checkFileOutputPort;
-    private final ProductFileOutputPort productFileOutputPort;
+    private final CheckOutputPort checkOutputPort;
+    private final ProductOutputPort productOutputPort;
     private final DiscountCardOutputPort discountCardOutputPort;
-    private final ErrorFileOutputPort errorFileOutputPort;
+    private final ErrorOutputPort errorOutputPort;
     private final StdOutputPort stdOutputPort;
     private final DiscountService discountService = new DiscountService();
 
 
-    public CheckInputPort(CheckFileOutputPort checkFileOutputPort,
-                          ProductFileOutputPort productFileOutputPort,
+    public CheckInputPort(CheckOutputPort checkOutputPort,
+                          ProductOutputPort productOutputPort,
                           DiscountCardOutputPort discountCardOutputPort,
-                          ErrorFileOutputPort errorFileOutputPort,
+                          ErrorOutputPort errorOutputPort,
                           StdOutputPort stdOutputPort) {
-        this.checkFileOutputPort = checkFileOutputPort;
-        this.productFileOutputPort = productFileOutputPort;
+        this.checkOutputPort = checkOutputPort;
+        this.productOutputPort = productOutputPort;
         this.discountCardOutputPort = discountCardOutputPort;
-        this.errorFileOutputPort = errorFileOutputPort;
+        this.errorOutputPort = errorOutputPort;
         this.stdOutputPort = stdOutputPort;
     }
 
@@ -109,7 +109,7 @@ public class CheckInputPort implements CheckUseCase {
 
     private void tryToPersistCheck(Check check){
         try {
-            checkFileOutputPort.persist(check);
+            checkOutputPort.persist(check);
         } catch (BadFilePathException badFilePathException) {
             handleException(badFilePathException);
         } catch (InvocationTargetException | IllegalAccessException | URISyntaxException | IOException e) {
@@ -121,7 +121,7 @@ public class CheckInputPort implements CheckUseCase {
     private List<ProductPosition> getProductPositionsInStock() {
         List<ProductPosition> productPositionsInStock = List.of();
         try {
-            productPositionsInStock = productFileOutputPort.findAll();
+            productPositionsInStock = productOutputPort.findAll();
         } catch (BadFilePathException e) {
             handleException(e);
         } catch (IOException e) {
@@ -133,7 +133,7 @@ public class CheckInputPort implements CheckUseCase {
       private void handleException(AbstractException exception) {
         String errorText = exception.getErrorText();
         try {
-            errorFileOutputPort.writeError(errorText);
+            errorOutputPort.writeError(errorText);
             stdOutputPort.printError(errorText);
             throw exception;
         } catch (IOException | IllegalAccessException | InvocationTargetException | URISyntaxException e) {

@@ -12,4 +12,20 @@ public enum SaleConditionType {
         };
     }
 
+    public static SaleConditionType valueOf(boolean value) throws IllegalStateException {
+        if(value) return WHOLESALE;
+        return USUAL_PRICE;
+    }
+
+    public boolean toBool(){
+        switch (this) {
+            case WHOLESALE:
+                return true;
+            case USUAL_PRICE:
+                return false;
+            default:
+                throw new IllegalStateException("Unexpected value: " + this);
+        }
+    }
+
 }
