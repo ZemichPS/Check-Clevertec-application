@@ -218,7 +218,7 @@ public class CheckInputPort implements CheckUseCase {
         ).toList();
     }
 
-    public void checkForAbilityToPay(Check check, BigDecimal debitCardBalance) {
+    private void checkForAbilityToPay(Check check, BigDecimal debitCardBalance) {
         BigDecimal totalWithDiscount = check.computeAndGetTotalPrices().totalWithDiscount();
         if (debitCardBalance.compareTo(totalWithDiscount) < 0)
             handleException(new NotEnoughMoneyException("Debit card balance is less than the total cost including the discount"));

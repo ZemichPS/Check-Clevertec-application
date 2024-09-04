@@ -36,7 +36,7 @@ public class SimpleCVSFileReader implements CSVReader {
 
         try (InputStream inputStream = CheckRunner.class.getClassLoader().getResourceAsStream(resourceFileName)) {
             if (inputStream == null) {
-                throw new IOException("Resource not found: discountCards.csv");
+                throw new IOException("Resource not found: %s".formatted(resourceFileName));
             }
             return new BufferedReader(new InputStreamReader(inputStream))
                     .lines().collect(Collectors.toList());

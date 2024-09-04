@@ -16,8 +16,13 @@ import java.util.function.Predicate;
 public class DiscountCardFileOutPutAdapter implements DiscountCardOutputPort {
 
     private final String DISCOUNT_CARDS_RESOURCE_FILE_NAME = "discountCards.csv";
-    private final CSVReader csvReader = new SimpleCVSFileReader();
+    private final CSVReader csvReader;
     CSVStructureToObjectMapper<RealDiscountCard> mapper = new CSVStructureToDiscountCardsMapper();
+
+    public DiscountCardFileOutPutAdapter(CSVReader csvReader) {
+        this.csvReader = csvReader;
+    }
+
 
     @Override
     public List<RealDiscountCard> findAll() throws URISyntaxException, IOException {

@@ -9,12 +9,13 @@ import ru.clevertec.check.infrastructure.output.file.DiscountCardFileOutPutAdapt
 import ru.clevertec.check.infrastructure.output.file.ErrorFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.file.ProductFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.std.StdOutputAdapter;
+import ru.clevertec.check.infrastructure.utils.SimpleCVSFileReader;
 import ru.clevertec.check.interfaces.commandline.CommandLineAdapter;
 
 public class CheckRunner {
     public static void main(String[] args) {
         CheckOutputPort checkOutputPort = new CheckFileOutPutAdapter();
-        DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter();
+        DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter(new SimpleCVSFileReader());
         ErrorOutputPort errorOutputPort = new ErrorFileOutputAdapter();
         ProductOutputPort productOutputPort = new ProductFileOutputAdapter();
         StdOutputPort stdOutputPort = new StdOutputAdapter();
