@@ -6,11 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.clevertec.check.domain.model.entity.RealDiscountCard;
-import ru.clevertec.check.infrastructure.output.file.DiscountCardFileOutPutAdapter;
-import ru.clevertec.check.infrastructure.utils.CSVReader;
 import ru.clevertec.check.infrastructure.utils.SimpleCVSFileReader;
 
 import java.io.IOException;

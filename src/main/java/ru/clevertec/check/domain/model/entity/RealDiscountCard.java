@@ -53,4 +53,9 @@ public class RealDiscountCard implements DiscountCard{
         spec.check(cardNumber);
         this.number = cardNumber;
     }
+
+    @Override
+    public String toString() {
+        return id.toString();
+    }
 }

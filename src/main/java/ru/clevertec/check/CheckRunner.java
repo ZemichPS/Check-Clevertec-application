@@ -8,7 +8,9 @@ import ru.clevertec.check.infrastructure.output.file.CheckFileOutPutAdapter;
 import ru.clevertec.check.infrastructure.output.file.DiscountCardFileOutPutAdapter;
 import ru.clevertec.check.infrastructure.output.file.ErrorFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.file.ProductFileOutputAdapter;
+import ru.clevertec.check.infrastructure.output.file.mapper.SimpleCSVStructureMapper;
 import ru.clevertec.check.infrastructure.output.std.StdOutputAdapter;
+import ru.clevertec.check.infrastructure.utils.ErrorToCSVFileWriter;
 import ru.clevertec.check.infrastructure.utils.SimpleCVSFileReader;
 import ru.clevertec.check.interfaces.commandline.CommandLineAdapter;
 
