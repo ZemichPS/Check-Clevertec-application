@@ -21,14 +21,12 @@ class DiscountServiceTest {
 
     @Test
     void testComputeDiscount_whenWholesaleDiscountPolicyApplicable_ShouldApplyWholesaleDiscount() {
-        // Arrange
         OrderItemDto orderItem = new OrderItemDto(
                 new RealDiscountCard(new CardId(1111), BigDecimal.TEN),
                 SaleConditionType.WHOLESALE,
                 10,
                 BigDecimal.ONE,
                 "Milk 1l");
-
         BigDecimal discount = discountService.computeDiscount(orderItem);
         assertEquals(BigDecimal.valueOf(1).setScale(2, RoundingMode.DOWN), discount);
     }
@@ -41,7 +39,6 @@ class DiscountServiceTest {
                 10,
                 BigDecimal.valueOf(5.60),
                 "Milk 1l");
-
         BigDecimal discount = discountService.computeDiscount(orderItem);
         assertEquals(BigDecimal.valueOf(2.80).setScale(2, RoundingMode.DOWN), discount);
     }
@@ -54,7 +51,6 @@ class DiscountServiceTest {
                 10,
                 BigDecimal.ONE,
                 "Milk 1l");
-
         BigDecimal discount = discountService.computeDiscount(orderItem);
         assertEquals(BigDecimal.ZERO, discount);
     }

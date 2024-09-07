@@ -41,11 +41,11 @@ class ParserContextTest {
     @Test
     @DisplayName("Parse arguments with only balance and discount card")
     void testParseArgumentsWithBalanceAndDiscountCard() {
-        String[] args = {"balanceDebitCard=50.00", "discountCard=54321"};
+        String[] args = {"balanceDebitCard=50.00", "discountCard=4321"};
         ArgumentParsingContext context = parserContext.parseArguments(args);
 
         assertEquals(new BigDecimal("50.00"), context.getBalanceDebitCard().orElseThrow());
-        assertEquals(new CardNumber(54321), context.getCardNumber().orElseThrow());
+        assertEquals(new CardNumber(4321), context.getCardNumber().orElseThrow());
         assertTrue(context.getProductIdQuantityMap().isEmpty());
     }
 

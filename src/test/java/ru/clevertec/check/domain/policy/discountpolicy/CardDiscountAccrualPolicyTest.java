@@ -1,42 +1,47 @@
 package ru.clevertec.check.domain.policy.discountpolicy;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import ru.clevertec.check.domain.model.entity.Check;
-import ru.clevertec.check.domain.model.entity.factoty.CheckFactory;
-import ru.clevertec.check.domain.model.valueobject.CardNumber;
-import ru.clevertec.check.domain.model.valueobject.CheckItem;
-import ru.clevertec.check.domain.model.valueobject.ProductId;
+import org.junit.jupiter.api.extension.ExtendWith;
+import ru.clevertec.check.domain.model.dto.OrderItemDto;
+import ru.clevertec.check.domain.model.entity.DiscountCard;
+import ru.clevertec.check.domain.model.entity.NullDiscountCard;
+import testconfig.InjectOrderItem;
+import testconfig.InjectOrderItemProcessor;
 
 import java.math.BigDecimal;
-import java.util.Collections;
-import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
+@ExtendWith({InjectOrderItemProcessor.class})
 class CardDiscountAccrualPolicyTest {
 
+    @InjectOrderItem(cardNumber = 5131)
+    private OrderItemDto orderItemDto;
+    private CardDiscountAccrualPolicy policy = new CardDiscountAccrualPolicy();
+
     @Test
-    @DisplayName("Apply discount to Check based on CardNumber")
-    void testApplyDiscount() {
-        // Arrange
-        CardNumber cardNumber = new CardNumber(123456);
-        BigDecimal discountRate = new BigDecimal("0.10"); // 10% discount
-        CardDiscountAccrualPolicy policy = new CardDiscountAccrualPolicy(cardNumber, discountRate);
+    void testApply_ifDiscountCardIsValid_setDiscountAmount() {
+        DiscountCard realDiscountCard = orderItemDto.discountCard();
+        policy.apply(realDiscountCard);
+        assertEquals(BigDecimal.TWO, realDiscountCard.getDiscountAmount());
+    }
 
-        CheckItem checkItem = new CheckItem(new ProductId(1), 2);
-        BigDecimal itemPrice = new BigDecimal("50.00");
-        checkItem.setPrice(itemPrice);
+    @Test
+    void testApply_ifDiscountCardIsInvalid_doesNotApplyDiscount() {
+        DiscountCard nullDiscountCard = new NullDiscountCard();
+        policy.apply(nullDiscountCard);
+        assertEquals(BigDecimal.ZERO, nullDiscountCard.getDiscountAmount());
+    }
 
-        List<CheckItem> checkItems = Collections.singletonList(checkItem);
-        Check check = CheckFactory.getNewFromCheckItems(checkItems);
+    @Test
+    void testIsApplicable_ifDiscountCardIsInvalid_returnFalse() {
+        DiscountCard nullDiscountCard = new NullDiscountCard();
+        assertFalse(nullDiscountCard.isValid());
+    }
 
-        // Act
-        BigDecimal totalPriceBeforeDiscount = check.computeAndGetTotalPrices().totalPrice();
-        policy.apply(check);
-        BigDecimal totalPriceAfterDiscount = check.getDiscountCard().getDiscountAmount();
-
-        // Assert
-        assertEquals(totalPriceBeforeDiscount.multiply(BigDecimal.ONE.subtract(discountRate)), totalPriceAfterDiscount);
+    @Test
+    void testIsApplicable_ifDiscountCardIsIValid_returnTrue() {
+        DiscountCard nullDiscountCard = orderItemDto.discountCard();
+        assertTrue(nullDiscountCard.isValid());
     }
 }
