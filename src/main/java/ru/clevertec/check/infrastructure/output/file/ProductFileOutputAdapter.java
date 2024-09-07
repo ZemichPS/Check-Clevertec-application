@@ -16,8 +16,16 @@ import java.util.function.Predicate;
 
 public class ProductFileOutputAdapter implements ProductOutputPort {
     private final String PRODUCT_LIST_RESOURCE_FILE_NAME = "products.csv";
-    private final CSVReader csvReader = new SimpleCVSFileReader();
-    CSVStructureToObjectMapper<ProductPosition> mapper = new CSVStructureToProductPositionsMapper();
+
+    //    private final CSVReader csvReader = new SimpleCVSFileReader();
+    private final CSVReader csvReader;
+    private final CSVStructureToObjectMapper<ProductPosition> mapper;
+
+    public ProductFileOutputAdapter(CSVReader csvReader, CSVStructureToObjectMapper<ProductPosition> mapper) {
+        this.csvReader = csvReader;
+        this.mapper = mapper;
+    }
+    //   private final CSVStructureToObjectMapper<ProductPosition> mapper = new CSVStructureToProductPositionsMapper();
 
     @Override
     public List<ProductPosition> findAll() throws URISyntaxException, IOException {
@@ -30,8 +38,4 @@ public class ProductFileOutputAdapter implements ProductOutputPort {
         return mapper.map(rawProductData);
     }
 
-    private List<String> readProductFileAsTextLines() throws IOException {
-        Path pathToProductsFile = Path.of("products.csv");
-        return Files.readAllLines(pathToProductsFile);
-    }
 }

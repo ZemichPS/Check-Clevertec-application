@@ -2,10 +2,7 @@ package ru.clevertec.check.domain.specification;
 
 import ru.clevertec.check.domain.model.exception.GenericSpecificationException;
 import ru.clevertec.check.domain.model.valueobject.Price;
-import ru.clevertec.check.domain.model.valueobject.ProductName;
 import ru.clevertec.check.domain.specification.shared.AbstractSpecification;
-
-import java.math.BigDecimal;
 
 public class PositiveProductPriceSpecification extends AbstractSpecification<Price> {
 

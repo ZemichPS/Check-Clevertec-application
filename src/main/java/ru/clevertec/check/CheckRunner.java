@@ -8,6 +8,7 @@ import ru.clevertec.check.infrastructure.output.file.CheckFileOutPutAdapter;
 import ru.clevertec.check.infrastructure.output.file.DiscountCardFileOutPutAdapter;
 import ru.clevertec.check.infrastructure.output.file.ErrorFileOutputAdapter;
 import ru.clevertec.check.infrastructure.output.file.ProductFileOutputAdapter;
+import ru.clevertec.check.infrastructure.output.file.mapper.CSVStructureToProductPositionsMapper;
 import ru.clevertec.check.infrastructure.output.file.mapper.SimpleCSVStructureMapper;
 import ru.clevertec.check.infrastructure.output.std.StdOutputAdapter;
 import ru.clevertec.check.infrastructure.utils.ErrorToCSVFileWriter;
@@ -19,7 +20,7 @@ public class CheckRunner {
         CheckOutputPort checkOutputPort = new CheckFileOutPutAdapter();
         DiscountCardOutputPort discountCardOutputPort = new DiscountCardFileOutPutAdapter(new SimpleCVSFileReader());
         ErrorOutputPort errorOutputPort = new ErrorFileOutputAdapter();
-        ProductOutputPort productOutputPort = new ProductFileOutputAdapter();
+        ProductOutputPort productOutputPort = new ProductFileOutputAdapter(new SimpleCVSFileReader(), new CSVStructureToProductPositionsMapper());
         StdOutputPort stdOutputPort = new StdOutputAdapter();
 
         CheckUseCase createCheckUseCase = new CheckInputPort(checkOutputPort,

@@ -14,7 +14,7 @@ public class DiscountCardNumberSpecification extends AbstractSpecification<CardN
     public void check(CardNumber item) {
         if (!isSatisfiedBy(item)) {
             int currentCardNumberLength = item.number().toString().length();
-            throw new GenericSpecificationException("Length discount card number must be %s, but current card number %s ".formatted(VALID_NUMBER_OF_DIGITS, currentCardNumberLength));
+            throw new GenericSpecificationException("Length discount card number must be %s, but current card number %s".formatted(VALID_NUMBER_OF_DIGITS, currentCardNumberLength));
         }
     }
 

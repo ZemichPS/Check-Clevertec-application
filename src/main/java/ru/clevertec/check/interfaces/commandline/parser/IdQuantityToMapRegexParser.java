@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 
 public class IdQuantityToMapRegexParser implements ArgumentParser {
 
-    private final String REGEX = "^\\d+-\\d+$";
+    private final String REGEX = "\\d+-\\d+";
     Pattern pattern = Pattern.compile(REGEX);
 
     @Override

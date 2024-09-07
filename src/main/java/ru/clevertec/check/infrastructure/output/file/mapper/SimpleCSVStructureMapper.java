@@ -35,7 +35,6 @@ public class SimpleCSVStructureMapper implements CSVStructureMapper {
                     .map(fieldName-> getAccordingRegisterType(fieldName, registerType))
                     .collect(Collectors.joining(";")) + "\n";
         } else {
-
             return Arrays.stream(aClass.getDeclaredFields())
                     .peek(field -> field.setAccessible(true))
                     .map(Field::getName)

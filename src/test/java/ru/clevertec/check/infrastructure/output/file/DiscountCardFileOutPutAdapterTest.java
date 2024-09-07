@@ -31,9 +31,6 @@ class DiscountCardFileOutPutAdapterTest {
     @Test
     @DisplayName("Should return a list of discount cards")
     void testFindAll() throws URISyntaxException, IOException {
-        Predicate<String> notEmpty = line -> !line.isEmpty();
-        Predicate<String> startWithDigit = line -> Character.isDigit(line.charAt(0));
-        List<Predicate<String>> predicates = List.of(notEmpty, startWithDigit);
 
         List<String[]> mockedData = List.of(
                 new String[]{"1", "7777", "10"},

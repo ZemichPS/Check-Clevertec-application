@@ -13,6 +13,7 @@ class ItemHolderTest {
     private ItemHolder itemHolder = new ItemHolder();
 
     @Test
+    @DisplayName("Should add item to ItemHolder and verify its presence")
     @Order(1)
     void addItem() {
         CheckItem checkItem = new CheckItem(
@@ -26,12 +27,12 @@ class ItemHolderTest {
         itemHolder.addItem(checkItem);
         Assertions.assertAll(
                 () -> assertEquals(1, itemHolder.getItems().size()),
-                () -> assertNotNull(itemHolder.getItems().getFirst()),
-                () -> assertDoesNotThrow(() -> itemHolder.addItem(checkItem))
+                () -> assertTrue(itemHolder.getItems().contains(checkItem))
         );
     }
 
     @Test
+    @DisplayName("Should return correct items and their count")
     @Order(2)
     void getItems() {
         CheckItem checkItem = new CheckItem(
@@ -45,12 +46,13 @@ class ItemHolderTest {
         itemHolder.addItem(checkItem);
 
         Assertions.assertAll(
-                () -> assertEquals(1, itemHolder.getItems().size()),
-                () -> assertNotNull(itemHolder.getItems().getFirst())
+                () -> assertEquals(1, itemHolder.getItemsCount()),
+                () -> assertEquals(checkItem,itemHolder.getItems().getFirst())
         );
     }
 
     @Test
+    @DisplayName("Should return the correct count of items in ItemHolder")
     @Order(3)
     void getItemsCount() {
         CheckItem checkItem = new CheckItem(

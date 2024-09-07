@@ -13,6 +13,4 @@ public class ProductPositionService {
                 .filter(position -> position.product().getId().equals(productId))
                 .findFirst();
     }
-
-
 }
